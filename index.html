@@ -1,465 +1,935 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Strands Arena</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#0B0B10;
-    --surface:#15151D;
-    --surface-2:#1D1D27;
-    --line: rgba(255,255,255,0.08);
-    --text:#F5F3EE;
-    --muted:#8D8D9A;
-    --whatsapp:#25D366;
-    --accent:#F2C94C; /* overridden per stall */
-    --accent-soft: rgba(242,201,76,0.14);
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, var(--accent-soft), transparent 60%),
-      var(--ink);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    padding-bottom: 84px; /* room for sticky whatsapp bar */
-  }
-  ::selection{background:var(--accent); color:#000;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Strands Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0B0B10;
+      --surface: #15151D;
+      --surface-2: #1D1D27;
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #F5F3EE;
+      --muted: #8D8D9A;
+      --whatsapp: #25D366;
+      --accent: #F2C94C;
+      /* overridden per stall */
+      --accent-soft: rgba(242, 201, 76, 0.14);
+    }
 
-  h1,h2,h3{font-family:'Bebas Neue',sans-serif; letter-spacing:0.02em; margin:0;}
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  .wrap{max-width:520px; margin:0 auto; padding:18px 16px 0;}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-  /* ---------- Top bar ---------- */
-  .topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 2px 14px;}
-  .brand{display:flex; align-items:center; gap:10px;}
-  .brand .mark{
-    width:34px; height:34px; border-radius:9px;
-    background:var(--accent); color:#0B0B10; font-family:'Bebas Neue';
-    display:flex; align-items:center; justify-content:center; font-size:19px;
-    flex-shrink:0;
-  }
-  .brand .txt{line-height:1.05;}
-  .brand .txt .eyebrow{font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.14em; color:var(--muted); text-transform:uppercase;}
-  .brand .txt .title{font-size:22px;}
-  .loc-pill{
-    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.05em;
-    border:1px solid var(--line); color:var(--muted); padding:5px 10px; border-radius:100px;
-    white-space:nowrap;
-  }
-  .loc-pill b{color:var(--text); font-weight:700;}
+    body {
+      background:
+        radial-gradient(1200px 600px at 50% -10%, var(--accent-soft), transparent 60%),
+        var(--ink);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 84px;
+      /* room for sticky whatsapp bar */
+    }
 
-  /* ---------- Progress strip ---------- */
-  .progress-strip{
-    display:flex; align-items:center; gap:8px; margin-bottom:16px;
-    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 12px;
-  }
-  .progress-strip .label{font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; flex-shrink:0;}
-  .dots{display:flex; gap:6px; flex:1;}
-  .dot{
-    flex:1; height:8px; border-radius:5px; background:rgba(255,255,255,0.08);
-    position:relative; overflow:hidden;
-  }
-  .dot.solved{background:#22C55E;}
-  .dot.gaveup{background:#5b5b66;}
-  .dot.current{outline:2px solid var(--accent); outline-offset:1px;}
+    ::selection {
+      background: var(--accent);
+      color: #000;
+    }
 
-  /* ---------- Card ---------- */
-  .card{
-    background:var(--surface); border:1px solid var(--line); border-radius:20px;
-    padding:16px; margin-bottom:16px;
-  }
+    h1,
+    h2,
+    h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
 
-  /* ---------- Landing (stall picker) ---------- */
-  .hero{padding:28px 4px 8px;}
-  .hero .eyebrow{font-family:'Space Mono',monospace; color:var(--accent); font-size:12px; letter-spacing:0.16em; text-transform:uppercase;}
-  .hero h1{font-size:46px; line-height:0.95; margin-top:6px;}
-  .hero p{color:var(--muted); font-size:15px; line-height:1.5; margin-top:10px; max-width:40ch;}
-  .stall-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px;}
-  .stall-card{
-    display:block; text-decoration:none; color:inherit; cursor:pointer;
-    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px;
-    position:relative; overflow:hidden;
-  }
-  .stall-card::before{
-    content:""; position:absolute; inset:0; opacity:0.10; background:var(--c);
-  }
-  .stall-card .n{font-family:'Space Mono',monospace; font-size:11px; color:var(--muted);}
-  .stall-card .g{font-family:'Bebas Neue'; font-size:22px; margin-top:2px; position:relative;}
-  .stall-card .l{font-size:12px; color:var(--muted); margin-top:4px; position:relative;}
-  .stall-card .badge{
-    position:absolute; top:10px; right:10px; font-size:16px;
-  }
-  .stall-card.locked{cursor:default; opacity:0.55;}
-  .stall-card.locked::before{opacity:0.04;}
-  .stall-card.locked .g{color:var(--muted);}
-  .stall-card.locked .l{display:flex; align-items:center; gap:4px;}
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 18px 16px 0;
+    }
 
-  /* ---------- toast ---------- */
-  .toast-host{
-    position:absolute; left:50%; top:-6px; transform:translate(-50%,-100%);
-    z-index:5; width:calc(100% - 8px); pointer-events:none;
-  }
-  .toast{
-    background:#1D1D27; border:1px solid var(--line); color:var(--text);
-    font-size:12.5px; line-height:1.4; padding:9px 12px; border-radius:10px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.35);
-    opacity:0; transform:translateY(6px); transition:opacity .2s ease, transform .2s ease;
-  }
-  .toast.show{opacity:1; transform:translateY(0);}
-  .toast b{color:var(--accent);}
+    /* ---------- Top bar ---------- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 2px 14px;
+    }
 
-  /* ---------- Puzzle header ---------- */
-  .puzzle-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:2px;}
-  .puzzle-head h2{font-size:28px;}
-  .found-count{font-family:'Space Mono',monospace; font-size:13px; color:var(--muted);}
-  .found-count b{color:var(--accent);}
-  .hint-line{color:var(--muted); font-size:13px; margin:4px 0 14px;}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  /* ---------- Grid ---------- */
-  .grid-shell{position:relative; touch-action:none; user-select:none;}
-  .grid{
-    display:grid; gap:6px;
-    position:relative; z-index:2;
-  }
-  .cell{
-    aspect-ratio:1/1; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue'; font-size:20px;
-    background:var(--surface-2); color:var(--text);
-    border:1px solid var(--line);
-    transition:transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
-  }
-  .cell.active{background:var(--accent); color:#0B0B10; border-color:var(--accent); transform:scale(1.08);}
-  .cell.found{color:#0B0B10; border-color:transparent;}
-  .cell.just-found{animation:pop .35s ease;}
-  @keyframes pop{ 0%{transform:scale(1);} 40%{transform:scale(1.22);} 100%{transform:scale(1);} }
-  .grid-shell.shake .grid{animation:shake .3s ease;}
-  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+    .brand .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #0B0B10;
+      font-family: 'Bebas Neue';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
 
-  svg.threads{position:absolute; inset:0; z-index:1; pointer-events:none; overflow:visible;}
-  svg.threads path{fill:none; stroke-linecap:round; stroke-linejoin:round;}
+    .brand .txt {
+      line-height: 1.05;
+    }
 
-  /* ---------- word chips ---------- */
-  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
-  .chip{
-    font-family:'Space Mono',monospace; font-size:12px; padding:6px 10px; border-radius:100px;
-    background:var(--surface-2); color:var(--muted); border:1px solid var(--line);
-    letter-spacing:0.03em;
-  }
-  .chip.found{color:#0B0B10; border-color:transparent; font-weight:700;}
+    .brand .txt .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
 
-  /* ---------- action row ---------- */
-  .actions{display:flex; gap:10px; margin-top:18px;}
-  .btn{
-    flex:1; border:none; border-radius:12px; padding:13px 14px; font-family:'Inter';
-    font-weight:700; font-size:14px; cursor:pointer; text-align:center; text-decoration:none;
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-  }
-  .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--muted);}
-  .btn-ghost:active{background:var(--surface-2);}
-  .btn-primary{background:var(--accent); color:#0B0B10;}
+    .brand .txt .title {
+      font-size: 22px;
+    }
 
-  /* ---------- sticky whatsapp bar ---------- */
-  .wa-bar{
-    position:fixed; left:0; right:0; bottom:0; z-index:50;
-    background:linear-gradient(180deg, rgba(11,11,16,0), var(--ink) 22%);
-    padding:14px 16px 16px;
-    display:flex; justify-content:center;
-    transform:translateY(120%); transition:transform .35s ease;
-  }
-  .wa-bar.show{transform:translateY(0);}
-  .wa-inner{
-    width:100%; max-width:488px; background:var(--whatsapp); border-radius:14px;
-    padding:12px 16px; display:flex; align-items:center; gap:12px; text-decoration:none; color:#06210f;
-    box-shadow:0 10px 30px rgba(37,211,102,0.25);
-  }
-  .wa-inner svg{flex-shrink:0;}
-  .wa-inner .t{line-height:1.15;}
-  .wa-inner .t .a{font-weight:800; font-size:14px;}
-  .wa-inner .t .b{font-size:11.5px; opacity:0.85;}
-  .wa-inner .go{margin-left:auto; font-size:20px;}
+    .loc-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: 5px 10px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
 
-  /* ---------- modal ---------- */
-  .overlay{
-    position:fixed; inset:0; background:rgba(6,6,9,0.72); backdrop-filter: blur(4px);
-    display:flex; align-items:flex-end; justify-content:center; z-index:100;
-    opacity:0; pointer-events:none; transition:opacity .25s ease;
-  }
-  .overlay.show{opacity:1; pointer-events:auto;}
-  .modal{
-    width:100%; max-width:520px; background:var(--surface); border:1px solid var(--line);
-    border-radius:22px 22px 0 0; padding:26px 22px 26px; text-align:center;
-    transform:translateY(30px); transition:transform .3s ease;
-  }
-  .overlay.show .modal{transform:translateY(0);}
-  .modal .icon{font-size:44px; margin-bottom:6px;}
-  .modal h3{font-size:30px;}
-  .modal p{color:var(--muted); font-size:14px; margin:8px 0 18px; line-height:1.5;}
-  .modal .btn{width:100%;}
+    .loc-pill b {
+      color: var(--text);
+      font-weight: 700;
+    }
 
-  .footer-note{
-    text-align:center; color:var(--muted); font-family:'Space Mono',monospace;
-    font-size:10.5px; letter-spacing:0.04em; padding:22px 16px 10px; opacity:0.6;
-  }
-  .reset-link{color:var(--muted); text-decoration:underline; background:none; border:none; font-family:inherit; font-size:inherit; cursor:pointer; padding:0;}
-  .beta-banner{
-    display:flex; align-items:center; gap:8px; background:rgba(139,92,246,0.14);
-    border:1px solid rgba(139,92,246,0.4); color:#C4B5FD; border-radius:12px;
-    padding:9px 12px; font-size:12px; margin-bottom:14px;
-  }
-  .beta-banner b{color:#fff;}
-  .footer-note .sep{opacity:0.4; margin:0 6px;}
-</style>
-</head>
-<body>
+    .btn-back {
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
+      background: var(--accent);
+      color: #0B0B10;
+      border: none;
+      border-radius: 14px;
+      padding: 18px 16px;
+      font-family: 'Bebas Neue';
+      font-size: 22px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    }
 
-<div class="wrap" id="app"></div>
-<div class="wa-bar" id="waBar">
-  <a class="wa-inner" id="waLink" target="_blank" rel="noopener">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="#06210f"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.92C21.96 6.45 17.5 2 12.04 2Zm5.8 14.1c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36l.56.01c.18.01.42-.07.66.5.24.58.83 2 .9 2.15.07.15.12.32.02.51-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.07.17-.2.72-.84.91-1.13.19-.29.38-.24.63-.14.26.1 1.65.78 1.93.92.29.14.48.21.55.33.07.12.07.68-.17 1.36Z"/></svg>
-    <div class="t"><div class="a" id="waTitle">Join the community</div><div class="b" id="waSub">Tap for updates, drops &amp; more games</div></div>
-    <div class="go">→</div>
-  </a>
-</div>
+    .btn-back:active {
+      transform: scale(0.98);
+    }
 
-<div class="overlay" id="overlay">
-  <div class="modal" id="modalBody"></div>
-</div>
+    /* ---------- Progress strip ---------- */
+    .progress-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
 
-<script>
-/* =========================================================
-   DATA — 4 verified Strands boards (7 rows x 6 cols each)
-   ========================================================= */
-const WA_LINK = "https://chat.whatsapp.com/JCcW4lxKSovxEIKRbn7eYW";
+    .progress-strip .label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      flex-shrink: 0;
+    }
 
-const STALLS = {
-  topleft: {
-    id:"topleft", game:"Game Show", location:"Himalaya", accent:"#F2C94C", short:"GS",
-    letters:[
-      ["D","M","O","E","C","H"],
-      ["R","I","T","O","R","O"],
-      ["P","N","O","C","S","E"],
-      ["U","K","E","A","N","S"],
-      ["N","S","A","S","S","M"],
-      ["A","J","F","Y","O","E"],
-      ["B","Y","T","E","R","M"]
-    ],
-    words:[
-      {text:"DRINKS",  color:"#FFCE00", path:[[0,0],[1,0],[1,1],[2,1],[3,1],[4,1]]},
-      {text:"MOTORS",  color:"#FF8A00", path:[[0,1],[0,2],[1,2],[1,3],[1,4],[2,4]]},
-      {text:"ECHOES",  color:"#F72585", path:[[0,3],[0,4],[0,5],[1,5],[2,5],[3,5]]},
-      {text:"OCEANS",  color:"#FF3B30", path:[[2,2],[2,3],[3,2],[3,3],[3,4],[4,4]]},
-      {text:"PUNJAB",  color:"#22D3EE", path:[[2,0],[3,0],[4,0],[5,1],[5,0],[6,0]]},
-      {text:"SAFETY",  color:"#8B5CF6", path:[[4,3],[4,2],[5,2],[6,3],[6,2],[6,1]]},
-      {text:"MEMORY",  color:"#22C55E", path:[[4,5],[5,5],[6,5],[5,4],[6,4],[5,3]]}
-    ]
-  },
-  topright: {
-    id:"topright", game:"Be An Influencer", location:"Himalaya", accent:"#A855F7", short:"BI",
-    letters:[
-      ["S","S","P","E","C","W"],
-      ["M","S","E","I","E","I"],
-      ["O","G","C","D","O","G"],
-      ["I","G","L","I","S","H"],
-      ["S","Y","O","A","H","T"],
-      ["R","A","C","E","O","E"],
-      ["L","E","K","C","H","S"]
-    ],
-    words:[
-      {text:"SMOGGY",  color:"#FFCE00", path:[[0,0],[1,0],[2,0],[2,1],[3,1],[4,1]]},
-      {text:"SPECIES", color:"#FF3B30", path:[[0,1],[0,2],[0,3],[0,4],[1,3],[1,2],[1,1]]},
-      {text:"ODISHA",  color:"#FF8A00", path:[[2,4],[2,3],[3,3],[3,4],[4,4],[4,3]]},
-      {text:"WEIGHT",  color:"#8B5CF6", path:[[0,5],[1,4],[1,5],[2,5],[3,5],[4,5]]},
-      {text:"ISRAEL",  color:"#22C55E", path:[[3,0],[4,0],[5,0],[5,1],[6,1],[6,0]]},
-      {text:"ECHOES",  color:"#F72585", path:[[5,3],[6,3],[6,4],[5,4],[5,5],[6,5]]},
-      {text:"CLOCK",   color:"#22D3EE", path:[[2,2],[3,2],[4,2],[5,2],[6,2]]}
-    ]
-  },
-  bottomleft: {
-    id:"bottomleft", game:"ScreamMeter", location:"Himalaya", accent:"#FF5A4E", short:"SM",
-    letters:[
-      ["C","A","I","N","D","E"],
-      ["C","N","S","A","T","C"],
-      ["E","R","P","L","E","H"],
-      ["M","A","H","X","T","O"],
-      ["A","R","J","U","R","E"],
-      ["N","I","O","K","E","S"],
-      ["T","K","O","N","A","N"]
-    ],
-    words:[
-      {text:"CANCER",  color:"#FF8A00", path:[[0,0],[0,1],[1,1],[1,0],[2,0],[2,1]]},
-      {text:"ISLAND",  color:"#FFCE00", path:[[0,2],[1,2],[2,3],[1,3],[0,3],[0,4]]},
-      {text:"ECHOES",  color:"#FF3B30", path:[[0,5],[1,5],[2,5],[3,5],[4,5],[5,5]]},
-      {text:"TEXTURE", color:"#F72585", path:[[1,4],[2,4],[3,3],[3,4],[4,3],[4,4],[5,4]]},
-      {text:"KONKAN",  color:"#8B5CF6", path:[[6,1],[6,2],[6,3],[5,3],[6,4],[6,5]]},
-      {text:"JOINT",   color:"#22C55E", path:[[4,2],[5,2],[5,1],[5,0],[6,0]]},
-      {text:"PHARMA",  color:"#22D3EE", path:[[2,2],[3,2],[3,1],[4,1],[3,0],[4,0]]}
-    ]
-  },
-  bottomright: {
-    id:"bottomright", game:"Vindhya Challenge", location:"Vindhya", accent:"#22D3B2", short:"VC",
-    letters:[
-      ["C","L","I","M","A","T"],
-      ["A","S","M","O","N","E"],
-      ["L","Y","L","O","G","E"],
-      ["L","O","S","P","O","C"],
-      ["I","N","S","T","R","H"],
-      ["T","A","K","E","S","O"],
-      ["F","L","O","O","D","E"]
-    ],
-    words:[
-      {text:"CLIMATE", color:"#FFCE00", path:[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[1,5]]},
-      {text:"ALLOYS",  color:"#FF8A00", path:[[1,0],[2,0],[3,0],[3,1],[2,1],[1,1]]},
-      {text:"MONGOL",  color:"#22D3EE", path:[[1,2],[1,3],[1,4],[2,4],[2,3],[2,2]]},
-      {text:"SPORTS",  color:"#22C55E", path:[[3,2],[3,3],[3,4],[4,4],[4,3],[4,2]]},
-      {text:"INTAKE",  color:"#F72585", path:[[4,0],[4,1],[5,0],[5,1],[5,2],[5,3]]},
-      {text:"FLOOD",   color:"#FF3B30", path:[[6,0],[6,1],[6,2],[6,3],[6,4]]},
-      {text:"ECHOES",  color:"#8B5CF6", path:[[2,5],[3,5],[4,5],[5,5],[6,5],[5,4]]}
-    ]
-  }
-};
-const HIMALAYA_KEYS = ["topleft","topright","bottomleft"];
-const VINDHYA_KEYS = ["bottomright"];
+    .dots {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+    }
 
-/* =========================================================
-   STATE (persisted in localStorage on this device)
-   ========================================================= */
-const STORE_KEY = "strands_arena_v2"; // bumped: invalidates any stale progress saved before the exact-path fix
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && typeof parsed === "object" && parsed.status && parsed.foundWords && parsed.scanned){
-        // sanity-check: drop any found words that don't actually belong to that puzzle
-        // (guards against corrupted state from an older build getting carried forward)
-        Object.keys(parsed.foundWords).forEach(key=>{
-          const puzzle = STALLS[key];
-          if(!puzzle){ delete parsed.foundWords[key]; delete parsed.status[key]; return; }
-          const validTexts = puzzle.words.map(w=>w.text);
-          parsed.foundWords[key] = (parsed.foundWords[key]||[]).filter(t=>validTexts.includes(t));
-          // if it was marked "solved" but doesn't actually have every word, it's stuck —
-          // unstick it so the board is playable again instead of frozen mid-way.
-          if(parsed.status[key]==="solved" && parsed.foundWords[key].length !== puzzle.words.length){
-            parsed.status[key] = "in_progress";
-          }
-        });
-        return parsed;
+    .dot {
+      flex: 1;
+      height: 8px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dot.solved {
+      background: #22C55E;
+    }
+
+    .dot.gaveup {
+      background: #5b5b66;
+    }
+
+    .dot.current {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    /* ---------- Card ---------- */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    /* ---------- Landing (stall picker) ---------- */
+    .hero {
+      padding: 28px 4px 8px;
+    }
+
+    .hero .eyebrow {
+      font-family: 'Space Mono', monospace;
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: 46px;
+      line-height: 0.95;
+      margin-top: 6px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      margin-top: 10px;
+      max-width: 40ch;
+    }
+
+    .stall-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stall-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stall-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.10;
+      background: var(--c);
+    }
+
+    .stall-card .n {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stall-card .g {
+      font-family: 'Bebas Neue';
+      font-size: 22px;
+      margin-top: 2px;
+      position: relative;
+    }
+
+    .stall-card .l {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      position: relative;
+    }
+
+    .stall-card .badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 16px;
+    }
+
+    .stall-card.locked {
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    .stall-card.locked::before {
+      opacity: 0.04;
+    }
+
+    .stall-card.locked .g {
+      color: var(--muted);
+    }
+
+    .stall-card.locked .l {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ---------- toast ---------- */
+    .toast-host {
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      transform: translate(-50%, -100%);
+      z-index: 5;
+      width: calc(100% - 8px);
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1D1D27;
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 12.5px;
+      line-height: 1.4;
+      padding: 9px 12px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast b {
+      color: var(--accent);
+    }
+
+    /* ---------- Puzzle header ---------- */
+    .puzzle-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .puzzle-head h2 {
+      font-size: 28px;
+    }
+
+    .found-count {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .found-count b {
+      color: var(--accent);
+    }
+
+    .hint-line {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 4px 0 14px;
+    }
+
+    /* ---------- Grid ---------- */
+    .grid-shell {
+      position: relative;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .grid {
+      display: grid;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cell {
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue';
+      font-size: 20px;
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      transition: transform .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+    }
+
+    .cell.active {
+      background: var(--accent);
+      color: #0B0B10;
+      border-color: var(--accent);
+      transform: scale(1.08);
+    }
+
+    .cell.found {
+      color: #0B0B10;
+      border-color: transparent;
+    }
+
+    .cell.just-found {
+      animation: pop .35s ease;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+      }
+
+      40% {
+        transform: scale(1.22);
+      }
+
+      100% {
+        transform: scale(1);
       }
     }
-  }catch(e){}
-  return { status:{}, foundWords:{}, scanned:{}, himalayaCelebrated:false, betaMode:false };
-}
-function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
-let state = loadState();
-if(typeof state.betaMode === "undefined") state.betaMode = false;
-try{ localStorage.removeItem("strands_arena_v1"); }catch(e){} // drop the old pre-fix save, if any
 
-// ?beta=1 in the URL (e.g. from a tester-only link) flips beta mode on for this device.
-(function initBeta(){
-  const flag = new URLSearchParams(location.search).get("beta");
-  if(flag === "1" || flag === "true"){
-    state.betaMode = true;
-    saveState();
-  }
-})();
+    .grid-shell.shake .grid {
+      animation: shake .3s ease;
+    }
 
-function toggleBeta(){
-  state.betaMode = !state.betaMode;
-  saveState();
-  route();
-}
-window.toggleBeta = toggleBeta;
+    @keyframes shake {
 
-function ensurePuzzleState(key){
-  if(!state.status[key]) state.status[key] = "new"; // new | in_progress | solved | gaveup
-  if(!state.foundWords[key]) state.foundWords[key] = [];
-}
+      0%,
+      100% {
+        transform: translateX(0);
+      }
 
-/* =========================================================
-   ROUTER
-   ========================================================= */
-const app = document.getElementById("app");
+      25% {
+        transform: translateX(-6px);
+      }
 
-function currentStall(){
-  return new URLSearchParams(location.search).get("stall");
-}
+      75% {
+        transform: translateX(6px);
+      }
+    }
 
-function navigate(stallKey){
-  const url = stallKey ? ("?stall=" + stallKey) : location.pathname;
-  history.pushState({stall: stallKey || null}, "", url);
-  route();
-}
+    svg.threads {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: visible;
+    }
 
-function route(){
-  const key = currentStall();
-  if(key && STALLS[key]){
-    // direct visits with ?stall=... are how QR scans arrive — always allowed,
-    // and this is exactly what marks the stall as unlocked (see renderPuzzlePage).
-    renderPuzzlePage(key);
-  }else{
-    renderLanding();
-  }
-}
+    svg.threads path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-window.addEventListener("popstate", route);
-window.navigate = navigate;
+    /* ---------- word chips ---------- */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
 
-function setWaBar(visible, title, sub){
-  const bar = document.getElementById("waBar");
-  document.getElementById("waLink").href = WA_LINK;
-  if(title) document.getElementById("waTitle").textContent = title;
-  if(sub) document.getElementById("waSub").textContent = sub;
-  bar.classList.toggle("show", !!visible);
-}
+    .chip {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 100px;
+      background: var(--surface-2);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      letter-spacing: 0.03em;
+    }
 
-function openModal(html){
-  document.getElementById("modalBody").innerHTML = html;
-  document.getElementById("overlay").classList.add("show");
-}
-function closeModal(){ document.getElementById("overlay").classList.remove("show"); }
-document.getElementById("overlay").addEventListener("click", (e)=>{
-  if(e.target.id === "overlay") closeModal();
-});
+    .chip.found {
+      color: #0B0B10;
+      border-color: transparent;
+      font-weight: 700;
+    }
 
-/* NOTE: the initial route() call lives at the very bottom of this script,
-   after every function/variable it depends on (renderPuzzlePage, foundPaths,
-   currentPath, etc.) has been declared. Calling it here would throw the
-   moment someone lands directly on a ?stall=... URL — i.e. every QR scan. */
+    /* ---------- action row ---------- */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
 
-/* =========================================================
-   LANDING PAGE
-   ========================================================= */
-function renderLanding(){
-  document.documentElement.style.setProperty("--accent", "#F2C94C");
-  const cards = Object.values(STALLS).map(s=>{
-    ensurePuzzleState(s.id);
-    const st = state.status[s.id];
-    const unlocked = state.betaMode || !!state.scanned[s.id];
-    const badge = st==="solved" ? "✅" : st==="gaveup" ? "🏳️" : "";
-    const statusLine = !unlocked
-      ? `🔒 Scan the QR at ${s.location} to unlock`
-      : (st==="solved" ? "Solved — tap to review"
-         : st==="gaveup" ? "Revealed — tap to review"
-         : `${s.words.length} words · tap to play`);
-    const tag = unlocked ? `href="?stall=${s.id}" data-stall="${s.id}"` : "";
-    const cls = unlocked ? "stall-card" : "stall-card locked";
-    return `<a class="${cls}" ${tag} style="--c:${s.accent}">
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-family: 'Inter';
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .btn-ghost:active {
+      background: var(--surface-2);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0B0B10;
+    }
+
+    /* ---------- sticky whatsapp bar ---------- */
+    .wa-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      background: linear-gradient(180deg, rgba(11, 11, 16, 0), var(--ink) 22%);
+      padding: 14px 16px 16px;
+      display: flex;
+      justify-content: center;
+      transform: translateY(120%);
+      transition: transform .35s ease;
+    }
+
+    .wa-bar.show {
+      transform: translateY(0);
+    }
+
+    .wa-inner {
+      width: 100%;
+      max-width: 488px;
+      background: var(--whatsapp);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #06210f;
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.25);
+    }
+
+    .wa-inner svg {
+      flex-shrink: 0;
+    }
+
+    .wa-inner .t {
+      line-height: 1.15;
+    }
+
+    .wa-inner .t .a {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .wa-inner .t .b {
+      font-size: 11.5px;
+      opacity: 0.85;
+    }
+
+    .wa-inner .go {
+      margin-left: auto;
+      font-size: 20px;
+    }
+
+    /* ---------- modal ---------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 6, 9, 0.72);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px 22px 0 0;
+      padding: 26px 22px 26px;
+      text-align: center;
+      transform: translateY(30px);
+      transition: transform .3s ease;
+    }
+
+    .overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal .icon {
+      font-size: 44px;
+      margin-bottom: 6px;
+    }
+
+    .modal h3 {
+      font-size: 30px;
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 8px 0 18px;
+      line-height: 1.5;
+    }
+
+    .modal .btn {
+      width: 100%;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      padding: 22px 16px 10px;
+      opacity: 0.6;
+    }
+
+    .reset-link {
+      color: var(--muted);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .beta-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(139, 92, 246, 0.14);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #C4B5FD;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .beta-banner b {
+      color: #fff;
+    }
+
+    .footer-note .sep {
+      opacity: 0.4;
+      margin: 0 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap" id="app"></div>
+  <div class="wa-bar" id="waBar">
+    <a class="wa-inner" id="waLink" target="_blank" rel="noopener">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#06210f">
+        <path
+          d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.92C21.96 6.45 17.5 2 12.04 2Zm5.8 14.1c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36l.56.01c.18.01.42-.07.66.5.24.58.83 2 .9 2.15.07.15.12.32.02.51-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.07.17-.2.72-.84.91-1.13.19-.29.38-.24.63-.14.26.1 1.65.78 1.93.92.29.14.48.21.55.33.07.12.07.68-.17 1.36Z" />
+      </svg>
+      <div class="t">
+        <div class="a" id="waTitle">Join the community</div>
+        <div class="b" id="waSub">Tap for updates, drops &amp; more games</div>
+      </div>
+      <div class="go">→</div>
+    </a>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modalBody"></div>
+  </div>
+
+  <script>
+    /* =========================================================
+       DATA — 4 verified Strands boards (7 rows x 6 cols each)
+       ========================================================= */
+    const WA_LINK = "https://chat.whatsapp.com/JCcW4lxKSovExIKRbn7eYW";
+
+    const STALLS = {
+      topleft: {
+        id: "topleft", game: "Game Show", location: "Himalaya", accent: "#F2C94C", short: "GS",
+        letters: [
+          ["A", "M", "E", "O", "C", "E"],
+          ["L", "O", "C", "H", "O", "A"],
+          ["C", "T", "O", "R", "E", "N"],
+          ["O", "R", "Y", "S", "S", "S"],
+          ["H", "O", "P", "B", "A", "A"],
+          ["O", "M", "U", "N", "J", "F"],
+          ["L", "E", "M", "Y", "T", "E"]
+        ],
+        words: [
+          { text: "ALCOHOL", color: "#FFCE00", path: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0]] },
+          { text: "MOTORS", color: "#FF8A00", path: [[0, 1], [1, 1], [2, 1], [2, 2], [2, 3], [3, 3]] },
+          { text: "ECHOES", color: "#FF3B30", path: [[0, 2], [1, 2], [1, 3], [1, 4], [2, 4], [3, 4]] },
+          { text: "OCEAN", color: "#22D3EE", path: [[0, 3], [0, 4], [0, 5], [1, 5], [2, 5]] },
+          { text: "PUNJAB", color: "#22C55E", path: [[4, 2], [5, 2], [5, 3], [5, 4], [4, 4], [4, 3]] },
+          { text: "SAFETY", color: "#F72585", path: [[3, 5], [4, 5], [5, 5], [6, 5], [6, 4], [6, 3]] },
+          { text: "MEMORY", color: "#8B5CF6", path: [[6, 2], [6, 1], [5, 1], [4, 1], [3, 1], [3, 2]] }
+        ]
+      },
+      topright: {
+        id: "topright", game: "Be An Influencer", location: "Himalaya", accent: "#A855F7", short: "BI",
+        letters: [
+          ["S", "W", "E", "I", "D", "O"],
+          ["M", "M", "O", "G", "I", "I"],
+          ["O", "E", "N", "H", "S", "S"],
+          ["G", "C", "G", "T", "H", "R"],
+          ["S", "H", "O", "L", "A", "A"],
+          ["P", "O", "E", "S", "S", "E"],
+          ["E", "C", "I", "E", "S", "L"]
+        ],
+        words: [
+          { text: "SMOG", color: "#FFCE00", path: [[0, 0], [1, 0], [2, 0], [3, 0]] },
+          { text: "SPECIES", color: "#FF8A00", path: [[4, 0], [5, 0], [6, 0], [6, 1], [6, 2], [6, 3], [6, 4]] },
+          { text: "WEIGHT", color: "#FF3B30", path: [[0, 1], [0, 2], [0, 3], [1, 3], [2, 3], [3, 3]] },
+          { text: "MONGOLS", color: "#22D3EE", path: [[1, 1], [1, 2], [2, 2], [3, 2], [4, 2], [4, 3], [5, 4]] },
+          { text: "ECHOES", color: "#8B5CF6", path: [[2, 1], [3, 1], [4, 1], [5, 1], [5, 2], [5, 3]] },
+          { text: "ODISHA", color: "#F72585", path: [[0, 5], [0, 4], [1, 4], [2, 4], [3, 4], [4, 4]] },
+          { text: "ISRAEL", color: "#22C55E", path: [[1, 5], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5]] }
+        ]
+      },
+      bottomleft: {
+        id: "bottomleft", game: "ScreamMeter", location: "Himalaya", accent: "#FF5A4E", short: "SM",
+        letters: [
+          ["C", "A", "N", "C", "E", "R"],
+          ["I", "H", "A", "I", "R", "J"],
+          ["S", "E", "C", "H", "O", "O"],
+          ["L", "P", "S", "S", "E", "I"],
+          ["A", "H", "P", "O", "R", "N"],
+          ["N", "A", "A", "T", "T", "T"],
+          ["D", "R", "M", "I", "M", "E"]
+        ],
+        words: [
+          { text: "CANCER", color: "#FFCE00", path: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]] },
+          { text: "ISLAND", color: "#FF8A00", path: [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0]] },
+          { text: "HAIR", color: "#FF3B30", path: [[1, 1], [1, 2], [1, 3], [1, 4]] },
+          { text: "JOINT", color: "#8B5CF6", path: [[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]] },
+          { text: "ECHOES", color: "#22C55E", path: [[2, 1], [2, 2], [2, 3], [2, 4], [3, 4], [3, 3]] },
+          { text: "SPORT", color: "#F72585", path: [[3, 2], [4, 2], [4, 3], [4, 4], [5, 4]] },
+          { text: "PHARMA", color: "#22D3EE", path: [[3, 1], [4, 1], [5, 1], [6, 1], [6, 2], [5, 2]] },
+          { text: "TIME", color: "#15803D", path: [[5, 3], [6, 3], [6, 4], [6, 5]] }
+        ]
+      },
+      bottomright: {
+        id: "bottomright", game: "Vindhya Challenge", location: "Vindhya", accent: "#22D3B2", short: "VC",
+        letters: [
+          ["C", "L", "I", "M", "A", "T"],
+          ["A", "L", "L", "O", "Y", "E"],
+          ["I", "M", "I", "T", "S", "E"],
+          ["N", "I", "S", "P", "O", "C"],
+          ["G", "N", "S", "T", "R", "H"],
+          ["F", "T", "A", "K", "E", "O"],
+          ["L", "O", "O", "D", "S", "E"]
+        ],
+        words: [
+          { text: "CLIMATE", color: "#FFCE00", path: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 5]] },
+          { text: "ALLOYS", color: "#FF8A00", path: [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [2, 4]] },
+          { text: "TIMING", color: "#22D3EE", path: [[2, 3], [2, 2], [2, 1], [2, 0], [3, 0], [4, 0]] },
+          { text: "INTAKE", color: "#F72585", path: [[3, 1], [4, 1], [5, 1], [5, 2], [5, 3], [5, 4]] },
+          { text: "SPORTS", color: "#8B5CF6", path: [[3, 2], [3, 3], [3, 4], [4, 4], [4, 3], [4, 2]] },
+          { text: "FLOOD", color: "#22C55E", path: [[5, 0], [6, 0], [6, 1], [6, 2], [6, 3]] },
+          { text: "ECHOES", color: "#FF3B30", path: [[2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [6, 4]] }
+        ]
+      }
+    };
+    const HIMALAYA_KEYS = ["topleft", "topright", "bottomleft"];
+    const VINDHYA_KEYS = ["bottomright"];
+
+    /* =========================================================
+       STATE (persisted in localStorage on this device)
+       ========================================================= */
+    const STORE_KEY = "strands_arena_v2"; // bumped: invalidates any stale progress saved before the exact-path fix
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object" && parsed.status && parsed.foundWords && parsed.scanned) {
+            // sanity-check: drop any found words that don't actually belong to that puzzle
+            // (guards against corrupted state from an older build getting carried forward)
+            Object.keys(parsed.foundWords).forEach(key => {
+              const puzzle = STALLS[key];
+              if (!puzzle) { delete parsed.foundWords[key]; delete parsed.status[key]; return; }
+              const validTexts = puzzle.words.map(w => w.text);
+              parsed.foundWords[key] = (parsed.foundWords[key] || []).filter(t => validTexts.includes(t));
+              // if it was marked "solved" but doesn't actually have every word, it's stuck —
+              // unstick it so the board is playable again instead of frozen mid-way.
+              if (parsed.status[key] === "solved" && parsed.foundWords[key].length !== puzzle.words.length) {
+                parsed.status[key] = "in_progress";
+              }
+            });
+            return parsed;
+          }
+        }
+      } catch (e) { }
+      return { status: {}, foundWords: {}, scanned: {}, himalayaCelebrated: false, betaMode: false, hintsGiven: {} };
+    }
+    function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    let state = loadState();
+    if (typeof state.betaMode === "undefined") state.betaMode = false;
+    try { localStorage.removeItem("strands_arena_v1"); } catch (e) { } // drop the old pre-fix save, if any
+
+    // ?beta=1 in the URL (e.g. from a tester-only link) flips beta mode on for this device.
+    (function initBeta() {
+      const flag = new URLSearchParams(location.search).get("beta");
+      if (flag === "1" || flag === "true") {
+        state.betaMode = true;
+        saveState();
+      }
+    })();
+
+    function toggleBeta() {
+      state.betaMode = !state.betaMode;
+      saveState();
+      route();
+    }
+    window.toggleBeta = toggleBeta;
+
+    function ensurePuzzleState(key) {
+      if (!state.status[key]) state.status[key] = "new"; // new | in_progress | solved | gaveup
+      if (!state.foundWords[key]) state.foundWords[key] = [];
+    }
+
+    /* =========================================================
+       ROUTER
+       ========================================================= */
+    const app = document.getElementById("app");
+
+    function currentStall() {
+      return new URLSearchParams(location.search).get("stall");
+    }
+
+    function navigate(stallKey) {
+      const url = stallKey ? ("?stall=" + stallKey) : location.pathname;
+      history.pushState({ stall: stallKey || null }, "", url);
+      route();
+    }
+
+    function route() {
+      const key = currentStall();
+      if (key && STALLS[key]) {
+        // direct visits with ?stall=... are how QR scans arrive — always allowed,
+        // and this is exactly what marks the stall as unlocked (see renderPuzzlePage).
+        renderPuzzlePage(key);
+      } else {
+        renderLanding();
+      }
+    }
+
+    window.addEventListener("popstate", route);
+    window.navigate = navigate;
+
+    function setWaBar(visible, title, sub) {
+      const bar = document.getElementById("waBar");
+      document.getElementById("waLink").href = WA_LINK;
+      if (title) document.getElementById("waTitle").textContent = title;
+      if (sub) document.getElementById("waSub").textContent = sub;
+      bar.classList.toggle("show", !!visible);
+    }
+
+    function openModal(html) {
+      document.getElementById("modalBody").innerHTML = html;
+      document.getElementById("overlay").classList.add("show");
+    }
+    function closeModal() { document.getElementById("overlay").classList.remove("show"); }
+    document.getElementById("overlay").addEventListener("click", (e) => {
+      if (e.target.id === "overlay") closeModal();
+    });
+
+    /* NOTE: the initial route() call lives at the very bottom of this script,
+       after every function/variable it depends on (renderPuzzlePage, foundPaths,
+       currentPath, etc.) has been declared. Calling it here would throw the
+       moment someone lands directly on a ?stall=... URL — i.e. every QR scan. */
+
+    /* =========================================================
+       LANDING PAGE
+       ========================================================= */
+    function renderLanding() {
+      document.documentElement.style.setProperty("--accent", "#F2C94C");
+      const cards = Object.values(STALLS).map(s => {
+        ensurePuzzleState(s.id);
+        const st = state.status[s.id];
+        const unlocked = state.betaMode || !!state.scanned[s.id];
+        const badge = st === "solved" ? "✅" : st === "gaveup" ? "🏳️" : "";
+        const statusLine = !unlocked
+          ? `🔒 Scan the QR at ${s.location} to unlock`
+          : (st === "solved" ? "Solved — tap to review"
+            : st === "gaveup" ? "Revealed — tap to review"
+              : `${s.words.length} words · tap to play`);
+        const tag = unlocked ? `href="?stall=${s.id}" data-stall="${s.id}"` : "";
+        const cls = unlocked ? "stall-card" : "stall-card locked";
+        return `<a class="${cls}" ${tag} style="--c:${s.accent}">
       <div class="badge">${badge}</div>
       <div class="n">${s.location.toUpperCase()}</div>
       <div class="g">${s.game}</div>
       <div class="l">${statusLine}</div>
     </a>`;
-  }).join("");
+      }).join("");
 
-  app.innerHTML = `
+      app.innerHTML = `
     <div class="hero">
       <div class="eyebrow">Scan · Play · Unlock</div>
       <h1>STRANDS<br/>ARENA</h1>
@@ -474,82 +944,82 @@ function renderLanding(){
       <button class="reset-link" onclick="toggleBeta()">${state.betaMode ? "Turn off beta tester mode" : "Enable beta tester mode"}</button>
     </div>
   `;
-  setWaBar(true, "Join the community", "Tap for updates, drops & more games");
+      setWaBar(true, "Join the community", "Tap for updates, drops & more games");
 
-  app.querySelectorAll("[data-stall]").forEach(el=>{
-    el.addEventListener("click", (e)=>{
-      e.preventDefault();
-      navigate(el.dataset.stall);
-    });
-  });
-}
+      app.querySelectorAll("[data-stall]").forEach(el => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          navigate(el.dataset.stall);
+        });
+      });
+    }
 
-function renderProgressStrip(){
-  const dots = HIMALAYA_KEYS.map(k=>{
-    ensurePuzzleState(k);
-    const st = state.status[k];
-    const cls = st==="solved" ? "solved" : st==="gaveup" ? "gaveup" : "";
-    return `<div class="dot ${cls}"></div>`;
-  }).join("");
-  ensurePuzzleState("bottomright");
-  const vSt = state.status["bottomright"];
-  const vDone = vSt==="solved" || vSt==="gaveup";
-  return `
+    function renderProgressStrip() {
+      const dots = HIMALAYA_KEYS.map(k => {
+        ensurePuzzleState(k);
+        const st = state.status[k];
+        const cls = st === "solved" ? "solved" : st === "gaveup" ? "gaveup" : "";
+        return `<div class="dot ${cls}"></div>`;
+      }).join("");
+      ensurePuzzleState("bottomright");
+      const vSt = state.status["bottomright"];
+      const vDone = vSt === "solved" || vSt === "gaveup";
+      return `
     <div class="progress-strip">
       <div class="label">Himalaya</div>
       <div class="dots">${dots}</div>
     </div>
     <div class="progress-strip">
       <div class="label">Vindhya</div>
-      <div class="dots"><div class="dot ${vSt==='solved'?'solved':vSt==='gaveup'?'gaveup':''}" style="flex:1"></div></div>
+      <div class="dots"><div class="dot ${vSt === 'solved' ? 'solved' : vSt === 'gaveup' ? 'gaveup' : ''}" style="flex:1"></div></div>
     </div>
   `;
-}
+    }
 
-function resetAll(){
-  if(confirm("Clear saved progress on this device?")){
-    localStorage.removeItem(STORE_KEY);
-    location.reload();
-  }
-}
-window.resetAll = resetAll;
+    function resetAll() {
+      if (confirm("Clear saved progress on this device?")) {
+        localStorage.removeItem(STORE_KEY);
+        location.reload();
+      }
+    }
+    window.resetAll = resetAll;
 
-/* =========================================================
-   PUZZLE PAGE
-   ========================================================= */
-let dragging = false;
-let currentPath = []; // array of [r,c]
-let foundPaths = {};  // word -> path used to find it (for drawing thread)
-let activePuzzle = null; // the puzzle currently on screen — read by the single global pointerup handler
+    /* =========================================================
+       PUZZLE PAGE
+       ========================================================= */
+    let dragging = false;
+    let currentPath = []; // array of [r,c]
+    let foundPaths = {};  // word -> path used to find it (for drawing thread)
+    let activePuzzle = null; // the puzzle currently on screen — read by the single global pointerup handler
 
-// Registered ONCE. Puzzle pages get re-rendered client-side without a full page
-// reload, so a per-render window listener would stack up across every visit and
-// keep checking drags against whichever puzzle was open first. Reading
-// `activePuzzle` here instead keeps it correct no matter how you navigated in.
-window.addEventListener("pointerup", ()=>{
-  if(!dragging) return;
-  dragging = false;
-  if(activePuzzle) attemptSubmit(activePuzzle);
-});
+    // Registered ONCE. Puzzle pages get re-rendered client-side without a full page
+    // reload, so a per-render window listener would stack up across every visit and
+    // keep checking drags against whichever puzzle was open first. Reading
+    // `activePuzzle` here instead keeps it correct no matter how you navigated in.
+    window.addEventListener("pointerup", () => {
+      if (!dragging) return;
+      dragging = false;
+      if (activePuzzle) attemptSubmit(activePuzzle);
+    });
 
-function renderPuzzlePage(key){
-  const puzzle = STALLS[key];
-  ensurePuzzleState(key);
-  document.documentElement.style.setProperty("--accent", puzzle.accent);
+    function renderPuzzlePage(key) {
+      const puzzle = STALLS[key];
+      ensurePuzzleState(key);
+      document.documentElement.style.setProperty("--accent", puzzle.accent);
 
-  // log the scan once
-  if(!state.scanned[key]){
-    state.scanned[key] = Date.now();
-    if(state.status[key] === "new") state.status[key] = "in_progress";
-    saveState();
-  }
+      // log the scan once
+      if (!state.scanned[key]) {
+        state.scanned[key] = Date.now();
+        if (state.status[key] === "new") state.status[key] = "in_progress";
+        saveState();
+      }
 
-  const already = state.status[key];
-  foundPaths = {};
-  currentPath = [];
-  activePuzzle = puzzle;
+      const already = state.status[key];
+      foundPaths = {};
+      currentPath = [];
+      activePuzzle = puzzle;
 
-  app.innerHTML = `
+      app.innerHTML = `
     <div class="topbar">
       <div class="brand">
         <div class="mark">${puzzle.short}</div>
@@ -558,8 +1028,8 @@ function renderPuzzlePage(key){
           <div class="title">${puzzle.game}</div>
         </div>
       </div>
-      <a class="loc-pill" href="${location.pathname}" data-home="1">All stalls</a>
     </div>
+    <button class="btn btn-back" id="homeBtnBig">← All stalls &amp; progress</button>
     ${state.betaMode ? `<div class="beta-banner">🧪 <span><b>Beta tester mode</b> is on — jump between any board from "All stalls".</span></div>` : ""}
     ${renderProgressStrip()}
     <div class="card">
@@ -569,323 +1039,356 @@ function renderPuzzlePage(key){
       </div>
       <div class="hint-line">Drag across letters — up, down, sideways or diagonal — to trace a word.</div>
       <div class="grid-shell" id="gridShell">
-        <div class="toast-host" id="toastHost"></div>
         <svg class="threads" id="threads"></svg>
         <div class="grid" id="grid" style="grid-template-columns:repeat(${puzzle.letters[0].length},1fr);"></div>
       </div>
       <div class="chips" id="chips"></div>
       <div class="actions">
         <button class="btn btn-ghost" id="giveUpBtn">Give up</button>
-        <button class="btn btn-primary" id="clearBtn">Clear selection</button>
+        <button class="btn btn-ghost" id="hintBtn">Hint</button>
+        <button class="btn btn-primary" id="clearBtn">Clear</button>
       </div>
     </div>
     <div class="footer-note">Progress saves automatically on this device. <button class="reset-link" onclick="resetAll()">Reset progress</button></div>
   `;
 
-  buildGrid(puzzle);
-  buildChips(puzzle);
-  updateFoundCount(puzzle);
+      buildGrid(puzzle);
+      buildChips(puzzle);
+      updateFoundCount(puzzle);
 
-  document.getElementById("clearBtn").addEventListener("click", ()=>{
-    currentPath = [];
-    renderSelectionVisual(puzzle);
-  });
-  document.getElementById("giveUpBtn").addEventListener("click", ()=> confirmGiveUp(puzzle));
-  document.querySelector("[data-home]").addEventListener("click", (e)=>{
-    e.preventDefault();
-    navigate(null);
-  });
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        currentPath = [];
+        renderSelectionVisual(puzzle);
+      });
+      document.getElementById("giveUpBtn").addEventListener("click", () => confirmGiveUp(puzzle));
+      document.getElementById("hintBtn").addEventListener("click", () => giveHint(puzzle));
+      document.getElementById("homeBtnBig").addEventListener("click", (e) => {
+        e.preventDefault();
+        navigate(null);
+      });
 
-  setWaBar(true, "Join the community", "Scanned in — tap anytime for the group");
+      setWaBar(true, "Join the community", "Scanned in — tap anytime for the group");
 
-  if(already === "solved"){
-    revealAll(puzzle, true);
-    updateFoundCount(puzzle);
-  }else if(already === "gaveup"){
-    revealAll(puzzle, false);
-    updateFoundCount(puzzle);
-  }
-}
-
-function buildGrid(puzzle){
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  puzzle.letters.forEach((row, r)=>{
-    row.forEach((letter, c)=>{
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.textContent = letter;
-      cell.dataset.r = r;
-      cell.dataset.c = c;
-      grid.appendChild(cell);
-    });
-  });
-
-  const shell = document.getElementById("gridShell");
-  const getCell = (r,c)=> grid.children[r*puzzle.letters[0].length + c];
-
-  function cellFromPoint(x,y){
-    const el = document.elementFromPoint(x,y);
-    if(!el || !el.classList || !el.classList.contains("cell")) return null;
-    return [parseInt(el.dataset.r), parseInt(el.dataset.c)];
-  }
-  function isAdjacent(a,b){
-    return Math.abs(a[0]-b[0])<=1 && Math.abs(a[1]-b[1])<=1 && !(a[0]===b[0] && a[1]===b[1]);
-  }
-  function sameCell(a,b){ return a[0]===b[0] && a[1]===b[1]; }
-  function inPath(pt){ return currentPath.some(p=>sameCell(p,pt)); }
-
-  function tryAdd(pt){
-    if(!pt) return;
-    const el = getCell(pt[0], pt[1]);
-    if(el.classList.contains("found")){
-      // Every letter can only belong to ONE word. This one's already claimed —
-      // tell the player instead of silently failing, since it's usually a
-      // repeated letter (e.g. a second "S") that looks free but isn't.
-      showToast(`That letter's already used in <b>${el.dataset.word}</b> — the word's right, try a different tile for it.`);
-      return;
+      if (already === "solved") {
+        revealAll(puzzle, true);
+        updateFoundCount(puzzle);
+      } else if (already === "gaveup") {
+        revealAll(puzzle, false);
+        updateFoundCount(puzzle);
+      }
     }
-    if(currentPath.length===0){ currentPath.push(pt); renderSelectionVisual(puzzle); return; }
-    const last = currentPath[currentPath.length-1];
-    if(sameCell(pt,last)) return;
-    // allow stepping back to previous cell to undo
-    if(currentPath.length>1 && sameCell(pt, currentPath[currentPath.length-2])){
-      currentPath.pop(); renderSelectionVisual(puzzle); return;
+
+    function buildGrid(puzzle) {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      puzzle.letters.forEach((row, r) => {
+        row.forEach((letter, c) => {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.textContent = letter;
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+          grid.appendChild(cell);
+        });
+      });
+
+      const shell = document.getElementById("gridShell");
+      const getCell = (r, c) => grid.children[r * puzzle.letters[0].length + c];
+
+      function cellFromPoint(x, y) {
+        const el = document.elementFromPoint(x, y);
+        if (!el || !el.classList || !el.classList.contains("cell")) return null;
+        return [parseInt(el.dataset.r), parseInt(el.dataset.c)];
+      }
+      function isAdjacent(a, b) {
+        return Math.abs(a[0] - b[0]) <= 1 && Math.abs(a[1] - b[1]) <= 1 && !(a[0] === b[0] && a[1] === b[1]);
+      }
+      function sameCell(a, b) { return a[0] === b[0] && a[1] === b[1]; }
+      function inPath(pt) { return currentPath.some(p => sameCell(p, pt)); }
+
+      function tryAdd(pt) {
+        if (!pt) return;
+        const el = getCell(pt[0], pt[1]);
+        if (el.classList.contains("found")) {
+          // Every letter can only belong to ONE word. This one's already claimed —
+          // tell the player instead of silently failing, since it's usually a
+          // repeated letter (e.g. a second "S") that looks free but isn't.
+          showToast(`That letter's already used in <b>${el.dataset.word}</b> — the word's right, try a different tile for it.`);
+          return;
+        }
+        if (currentPath.length === 0) { currentPath.push(pt); renderSelectionVisual(puzzle); return; }
+        const last = currentPath[currentPath.length - 1];
+        if (sameCell(pt, last)) return;
+        // allow stepping back to previous cell to undo
+        if (currentPath.length > 1 && sameCell(pt, currentPath[currentPath.length - 2])) {
+          currentPath.pop(); renderSelectionVisual(puzzle); return;
+        }
+        if (inPath(pt)) return;
+        if (!isAdjacent(last, pt)) return;
+        currentPath.push(pt);
+        renderSelectionVisual(puzzle);
+      }
+
+      function start(x, y) {
+        if (state.status[puzzle.id] === "solved" || state.status[puzzle.id] === "gaveup") return;
+        dragging = true;
+        currentPath = [];
+        tryAdd(cellFromPoint(x, y));
+      }
+      function move(x, y) {
+        if (!dragging) return;
+        tryAdd(cellFromPoint(x, y));
+      }
+      function end() {
+        if (!dragging) return;
+        dragging = false;
+        attemptSubmit(puzzle);
+      }
+
+      shell.addEventListener("pointerdown", (e) => { start(e.clientX, e.clientY); });
+      shell.addEventListener("pointermove", (e) => { if (dragging) move(e.clientX, e.clientY); });
+      shell.addEventListener("touchstart", (e) => { const t = e.touches[0]; start(t.clientX, t.clientY); }, { passive: true });
+      shell.addEventListener("touchmove", (e) => { const t = e.touches[0]; move(t.clientX, t.clientY); }, { passive: true });
+      shell.addEventListener("touchend", end);
+
+      renderThreads(puzzle); // draw any already-found words (e.g. after resize)
     }
-    if(inPath(pt)) return;
-    if(!isAdjacent(last, pt)) return;
-    currentPath.push(pt);
-    renderSelectionVisual(puzzle);
-  }
 
-  function start(x,y){
-    if(state.status[puzzle.id]==="solved" || state.status[puzzle.id]==="gaveup") return;
-    dragging = true;
-    currentPath = [];
-    tryAdd(cellFromPoint(x,y));
-  }
-  function move(x,y){
-    if(!dragging) return;
-    tryAdd(cellFromPoint(x,y));
-  }
-  function end(){
-    if(!dragging) return;
-    dragging = false;
-    attemptSubmit(puzzle);
-  }
-
-  shell.addEventListener("pointerdown", (e)=>{ start(e.clientX, e.clientY); });
-  shell.addEventListener("pointermove", (e)=>{ if(dragging) move(e.clientX, e.clientY); });
-  shell.addEventListener("touchstart", (e)=>{ const t=e.touches[0]; start(t.clientX,t.clientY); }, {passive:true});
-  shell.addEventListener("touchmove", (e)=>{ const t=e.touches[0]; move(t.clientX,t.clientY); }, {passive:true});
-  shell.addEventListener("touchend", end);
-
-  renderThreads(puzzle); // draw any already-found words (e.g. after resize)
-}
-
-function cellCenter(puzzle, r, c){
-  const grid = document.getElementById("grid");
-  const cell = grid.children[r*puzzle.letters[0].length + c];
-  const gridBox = grid.getBoundingClientRect();
-  const shellBox = document.getElementById("gridShell").getBoundingClientRect();
-  const box = cell.getBoundingClientRect();
-  return [
-    box.left + box.width/2 - shellBox.left,
-    box.top + box.height/2 - shellBox.top
-  ];
-}
-
-function pathToD(puzzle, path){
-  if(path.length===0) return "";
-  const pts = path.map(([r,c])=>cellCenter(puzzle,r,c));
-  return "M" + pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" L ");
-}
-
-function renderThreads(puzzle){
-  const svg = document.getElementById("threads");
-  const shellBox = document.getElementById("gridShell").getBoundingClientRect();
-  svg.setAttribute("width", shellBox.width);
-  svg.setAttribute("height", shellBox.height);
-  let html = "";
-  Object.entries(foundPaths).forEach(([word, path])=>{
-    const wordDef = puzzle.words.find(w=>w.text===word);
-    html += `<path d="${pathToD(puzzle,path)}" stroke="${wordDef.color}" stroke-width="14" opacity="0.55"/>`;
-  });
-  if(currentPath.length>1){
-    html += `<path d="${pathToD(puzzle,currentPath)}" stroke="${puzzle.accent}" stroke-width="12" opacity="0.85"/>`;
-  }
-  svg.innerHTML = html;
-}
-
-function renderSelectionVisual(puzzle){
-  // reset all non-found cells
-  document.querySelectorAll(".cell").forEach(cell=>{
-    if(!cell.classList.contains("found")) cell.classList.remove("active");
-  });
-  currentPath.forEach(([r,c])=>{
-    const cell = document.getElementById("grid").children[r*puzzle.letters[0].length + c];
-    if(!cell.classList.contains("found")) cell.classList.add("active");
-  });
-  renderThreads(puzzle);
-}
-
-function pathsEqual(a,b){
-  if(a.length !== b.length) return false;
-  return a.every(([r,c],i)=> b[i][0]===r && b[i][1]===c);
-}
-
-function attemptSubmit(puzzle){
-  const word = currentPath.map(([r,c])=>puzzle.letters[r][c]).join("");
-  const textMatch = puzzle.words.find(w=>w.text === word);
-
-  if(textMatch && !state.foundWords[puzzle.id].includes(textMatch.text) && pathsEqual(currentPath, textMatch.path)){
-    const match = textMatch;
-    foundPaths[match.text] = currentPath.slice();
-    state.foundWords[puzzle.id].push(match.text);
-    saveState();
-    currentPath.forEach(([r,c])=>{
-      const cell = document.getElementById("grid").children[r*puzzle.letters[0].length + c];
-      cell.classList.add("found","just-found");
-      cell.dataset.word = match.text;
-      cell.style.background = match.color;
-      cell.style.borderColor = match.color;
-      cell.style.color = "#0B0B10";
-      setTimeout(()=>cell.classList.remove("just-found"), 400);
-    });
-    currentPath = [];
-    buildChips(puzzle);
-    updateFoundCount(puzzle);
-    renderThreads(puzzle);
-    checkCompletion(puzzle);
-    return;
-  }
-
-  // Letters spell a real word, but from the wrong tiles (e.g. the wrong duplicate letter).
-  if(textMatch && state.foundWords[puzzle.id].includes(textMatch.text)){
-    showToast(`You've already found <b>${word}</b> ✅`);
-  }else if(textMatch){
-    showToast(`That spells <b>${word}</b>, but from the wrong tiles — one of those letters belongs to a different word. Try tracing it again.`);
-  }
-  const shell = document.getElementById("gridShell");
-  shell.classList.add("shake");
-  setTimeout(()=>shell.classList.remove("shake"), 300);
-  currentPath = [];
-  renderSelectionVisual(puzzle);
-}
-
-let toastTimer = null;
-function showToast(html){
-  const host = document.getElementById("toastHost");
-  if(!host) return;
-  clearTimeout(toastTimer);
-  host.innerHTML = `<div class="toast" id="activeToast">${html}</div>`;
-  requestAnimationFrame(()=> document.getElementById("activeToast").classList.add("show"));
-  toastTimer = setTimeout(()=>{
-    const t = document.getElementById("activeToast");
-    if(t) t.classList.remove("show");
-  }, 2200);
-}
-
-function buildChips(puzzle){
-  const chips = document.getElementById("chips");
-  chips.innerHTML = puzzle.words.map(w=>{
-    const found = state.foundWords[puzzle.id].includes(w.text);
-    return `<div class="chip ${found?'found':''}" style="${found?`background:${w.color}`:''}">${found ? w.text : "•".repeat(w.text.length)}</div>`;
-  }).join("");
-}
-
-function updateFoundCount(puzzle){
-  const el = document.getElementById("foundNum");
-  if(el) el.textContent = state.foundWords[puzzle.id].length;
-}
-
-function revealAll(puzzle, wasSolved){
-  puzzle.words.forEach(w=>{
-    if(!state.foundWords[puzzle.id].includes(w.text)){
-      if(wasSolved) state.foundWords[puzzle.id].push(w.text);
+    function cellCenter(puzzle, r, c) {
+      const grid = document.getElementById("grid");
+      const cell = grid.children[r * puzzle.letters[0].length + c];
+      const gridBox = grid.getBoundingClientRect();
+      const shellBox = document.getElementById("gridShell").getBoundingClientRect();
+      const box = cell.getBoundingClientRect();
+      return [
+        box.left + box.width / 2 - shellBox.left,
+        box.top + box.height / 2 - shellBox.top
+      ];
     }
-    foundPaths[w.text] = w.path;
-    w.path.forEach(([r,c])=>{
-      const cell = document.getElementById("grid").children[r*puzzle.letters[0].length + c];
-      cell.classList.add("found");
-      cell.dataset.word = w.text;
-      cell.style.background = w.color;
-      cell.style.borderColor = w.color;
-      cell.style.color = "#0B0B10";
-    });
-  });
-  buildChips(puzzle);
-  renderThreads(puzzle);
-}
 
-function checkCompletion(puzzle){
-  if(state.foundWords[puzzle.id].length === puzzle.words.length){
-    state.status[puzzle.id] = "solved";
-    saveState();
-    showSolvedModal(puzzle);
-  }
-}
+    function pathToD(puzzle, path) {
+      if (path.length === 0) return "";
+      const pts = path.map(([r, c]) => cellCenter(puzzle, r, c));
+      return "M" + pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" L ");
+    }
 
-function showSolvedModal(puzzle){
-  const himalayaAllDone = HIMALAYA_KEYS.every(k=> state.status[k]==="solved" || state.status[k]==="gaveup");
-  openModal(`
+    function renderThreads(puzzle) {
+      const svg = document.getElementById("threads");
+      const shellBox = document.getElementById("gridShell").getBoundingClientRect();
+      svg.setAttribute("width", shellBox.width);
+      svg.setAttribute("height", shellBox.height);
+      let html = "";
+      Object.entries(foundPaths).forEach(([word, path]) => {
+        const wordDef = puzzle.words.find(w => w.text === word);
+        html += `<path d="${pathToD(puzzle, path)}" stroke="${wordDef.color}" stroke-width="14" opacity="0.55"/>`;
+      });
+      if (currentPath.length > 1) {
+        html += `<path d="${pathToD(puzzle, currentPath)}" stroke="${puzzle.accent}" stroke-width="12" opacity="0.85"/>`;
+      }
+      svg.innerHTML = html;
+    }
+
+    function renderSelectionVisual(puzzle) {
+      // reset all non-found cells
+      document.querySelectorAll(".cell").forEach(cell => {
+        if (!cell.classList.contains("found")) cell.classList.remove("active");
+      });
+      currentPath.forEach(([r, c]) => {
+        const cell = document.getElementById("grid").children[r * puzzle.letters[0].length + c];
+        if (!cell.classList.contains("found")) cell.classList.add("active");
+      });
+      renderThreads(puzzle);
+    }
+
+    function pathsEqual(a, b) {
+      if (a.length !== b.length) return false;
+      return a.every(([r, c], i) => b[i][0] === r && b[i][1] === c);
+    }
+
+    function attemptSubmit(puzzle) {
+      const word = currentPath.map(([r, c]) => puzzle.letters[r][c]).join("");
+      const textMatch = puzzle.words.find(w => w.text === word);
+
+      if (textMatch && !state.foundWords[puzzle.id].includes(textMatch.text) && pathsEqual(currentPath, textMatch.path)) {
+        const match = textMatch;
+        foundPaths[match.text] = currentPath.slice();
+        state.foundWords[puzzle.id].push(match.text);
+        saveState();
+        currentPath.forEach(([r, c]) => {
+          const cell = document.getElementById("grid").children[r * puzzle.letters[0].length + c];
+          cell.classList.add("found", "just-found");
+          cell.dataset.word = match.text;
+          cell.style.background = match.color;
+          cell.style.borderColor = match.color;
+          cell.style.color = "#0B0B10";
+          setTimeout(() => cell.classList.remove("just-found"), 400);
+        });
+        currentPath = [];
+        buildChips(puzzle);
+        updateFoundCount(puzzle);
+        renderThreads(puzzle);
+        checkCompletion(puzzle);
+        return;
+      }
+
+      // Letters spell a real word, but from the wrong tiles (e.g. the wrong duplicate letter).
+      if (textMatch && state.foundWords[puzzle.id].includes(textMatch.text)) {
+        showToast(`You've already found <b>${word}</b> ✅`);
+      } else if (textMatch) {
+        showToast(`That spells <b>${word}</b>, but from the wrong tiles — one of those letters belongs to a different word. Try tracing it again.`);
+      }
+      const shell = document.getElementById("gridShell");
+      shell.classList.add("shake");
+      setTimeout(() => shell.classList.remove("shake"), 300);
+      currentPath = [];
+      renderSelectionVisual(puzzle);
+    }
+
+    let toastTimer = null;
+    function showToast(html) {
+      // Popups, not passive toasts — every message stays up until the player
+      // closes it, and is delivered through the same modal used everywhere else.
+      openModal(`
+    <div class="icon">✋</div>
+    <p style="margin-top:0">${html}</p>
+    <button class="btn btn-primary" style="width:100%" onclick="closeModal()">Got it</button>
+  `);
+    }
+
+    function giveHint(puzzle) {
+      if (!state.hintsGiven) state.hintsGiven = {};
+      if (!state.hintsGiven[puzzle.id]) state.hintsGiven[puzzle.id] = [];
+
+      const unfound = puzzle.words.filter(w => !state.foundWords[puzzle.id].includes(w.text));
+      if (unfound.length === 0) {
+        openModal(`
+      <div class="icon">🎉</div>
+      <h3>Nothing left to hint!</h3>
+      <p>You've already found every word on this board.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal()">Nice</button>
+    `);
+        return;
+      }
+
+      const notYetHinted = unfound.filter(w => !state.hintsGiven[puzzle.id].includes(w.text));
+      const pick = (notYetHinted.length ? notYetHinted : unfound)[
+        Math.floor(Math.random() * (notYetHinted.length ? notYetHinted.length : unfound.length))
+      ];
+
+      if (!state.hintsGiven[puzzle.id].includes(pick.text)) {
+        state.hintsGiven[puzzle.id].push(pick.text);
+        saveState();
+      }
+
+      openModal(`
+    <div class="icon">💡</div>
+    <h3>${pick.text}</h3>
+    <p>One of the words still hiding on this board — but not where it is. Go find its tiles!</p>
+    <button class="btn btn-primary" style="width:100%" onclick="closeModal()">Back to the board</button>
+  `);
+    }
+
+    function buildChips(puzzle) {
+      const chips = document.getElementById("chips");
+      chips.innerHTML = puzzle.words.map(w => {
+        const found = state.foundWords[puzzle.id].includes(w.text);
+        return `<div class="chip ${found ? 'found' : ''}" style="${found ? `background:${w.color}` : ''}">${found ? w.text : "•".repeat(w.text.length)}</div>`;
+      }).join("");
+    }
+
+    function updateFoundCount(puzzle) {
+      const el = document.getElementById("foundNum");
+      if (el) el.textContent = state.foundWords[puzzle.id].length;
+    }
+
+    function revealAll(puzzle, wasSolved) {
+      puzzle.words.forEach(w => {
+        if (!state.foundWords[puzzle.id].includes(w.text)) {
+          if (wasSolved) state.foundWords[puzzle.id].push(w.text);
+        }
+        foundPaths[w.text] = w.path;
+        w.path.forEach(([r, c]) => {
+          const cell = document.getElementById("grid").children[r * puzzle.letters[0].length + c];
+          cell.classList.add("found");
+          cell.dataset.word = w.text;
+          cell.style.background = w.color;
+          cell.style.borderColor = w.color;
+          cell.style.color = "#0B0B10";
+        });
+      });
+      buildChips(puzzle);
+      renderThreads(puzzle);
+    }
+
+    function checkCompletion(puzzle) {
+      if (state.foundWords[puzzle.id].length === puzzle.words.length) {
+        state.status[puzzle.id] = "solved";
+        saveState();
+        showSolvedModal(puzzle);
+      }
+    }
+
+    function showSolvedModal(puzzle) {
+      const himalayaAllDone = HIMALAYA_KEYS.every(k => state.status[k] === "solved" || state.status[k] === "gaveup");
+      openModal(`
     <div class="icon">🎉</div>
     <h3>Board cleared!</h3>
     <p>You untangled every word at ${puzzle.game}. Your bonus reward is unlocked — hop into the community to claim it.</p>
     <a class="btn btn-primary" href="${WA_LINK}" target="_blank" rel="noopener" style="display:block; margin-bottom:10px;">Open WhatsApp community</a>
     <button class="btn btn-ghost" style="width:100%" onclick="closeModal()">Keep exploring</button>
   `);
-  setWaBar(true, "Reward unlocked 🎉", "Tap to claim it in the community");
+      setWaBar(true, "Reward unlocked 🎉", "Tap to claim it in the community");
 
-  if(himalayaAllDone && !state.himalayaCelebrated){
-    state.himalayaCelebrated = true;
-    saveState();
-    setTimeout(()=>{
-      openModal(`
+      if (himalayaAllDone && !state.himalayaCelebrated) {
+        state.himalayaCelebrated = true;
+        saveState();
+        setTimeout(() => {
+          openModal(`
         <div class="icon">🏔️</div>
         <h3>Himalaya, complete.</h3>
         <p>All three Himalaya boards are done. That's the full set — one more reason to say hi in the community.</p>
         <a class="btn btn-primary" href="${WA_LINK}" target="_blank" rel="noopener" style="display:block;">Open WhatsApp community</a>
       `);
-    }, 900);
-  }
-}
+        }, 900);
+      }
+    }
 
-function confirmGiveUp(puzzle){
-  if(state.status[puzzle.id]==="solved" || state.status[puzzle.id]==="gaveup") return;
-  openModal(`
+    function confirmGiveUp(puzzle) {
+      if (state.status[puzzle.id] === "solved" || state.status[puzzle.id] === "gaveup") return;
+      openModal(`
     <div class="icon">🏳️</div>
     <h3>Give up on this board?</h3>
     <p>We'll reveal every word. You'll still get a community invite — no hard feelings.</p>
     <button class="btn btn-primary" style="width:100%; margin-bottom:10px;" id="confirmGiveUp">Yes, reveal it</button>
     <button class="btn btn-ghost" style="width:100%" onclick="closeModal()">Keep trying</button>
   `);
-  document.getElementById("confirmGiveUp").addEventListener("click", ()=>{
-    state.status[puzzle.id] = "gaveup";
-    saveState();
-    closeModal();
-    revealAll(puzzle, false);
-    updateFoundCount(puzzle);
-    openModal(`
+      document.getElementById("confirmGiveUp").addEventListener("click", () => {
+        state.status[puzzle.id] = "gaveup";
+        saveState();
+        closeModal();
+        revealAll(puzzle, false);
+        updateFoundCount(puzzle);
+        openModal(`
       <div class="icon">👀</div>
       <h3>Here's the board</h3>
       <p>No worries — every word's revealed above. Come say hi in the community anyway.</p>
       <a class="btn btn-primary" href="${WA_LINK}" target="_blank" rel="noopener" style="display:block;">Open WhatsApp community</a>
     `);
-    setWaBar(true, "Join the community", "Tap for updates, drops & more games");
-  });
-}
+        setWaBar(true, "Join the community", "Tap for updates, drops & more games");
+      });
+    }
 
-window.closeModal = closeModal;
+    window.closeModal = closeModal;
 
-window.addEventListener("resize", ()=>{
-  const key = currentStall();
-  if(key && STALLS[key]) renderThreads(STALLS[key]);
-});
+    window.addEventListener("resize", () => {
+      const key = currentStall();
+      if (key && STALLS[key]) renderThreads(STALLS[key]);
+    });
 
-/* Entry point — deliberately last, so it runs only after every function and
-   variable above (including the puzzle-page state further up) is defined. */
-route();
-</script>
+    /* Entry point — deliberately last, so it runs only after every function and
+       variable above (including the puzzle-page state further up) is defined. */
+    route();
+  </script>
 </body>
+
 </html>
